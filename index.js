@@ -2,9 +2,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const passport = require("passport");
-const passportSetup = require("./passport")
-const cookieSession = require("cookie-session");
+// const passport = require("passport");
+// const passportSetup = require("./passport")
+// const cookieSession = require("cookie-session");
 
 const app = express();
 
@@ -13,7 +13,6 @@ const userRouter = require("./routes/authRoutes");
 const cookieParser = require("cookie-parser");
 
 const bodyParser = require("body-parser");
-// const { requireSignIn } = require("./middleware/authMiddleware");
 
 dotenv.config();
 
@@ -38,21 +37,21 @@ app.use(
     credentials: true,
   })
 );
-app.use(
-  cookieSession({
-    name: "session",
-    keys: ["helloThere"],
-    maxAge: 30 * 24 * 60 * 60,
-  })
-);
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(
+//   cookieSession({
+//     name: "session",
+//     keys: ["helloThere"],
+//     maxAge: 30 * 24 * 60 * 60,
+//   })
+// );
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 app.use("/user", userRouter);
 // app.use('/session', sessionRouter);
 
 app.get("/", (req, res) => {
-  res.status(200).json({message:"User Auth service"});
+  res.status(200).json({message:"sukoon web service"});
 });
 
 app.listen(process.env.PORT || 5000, () => {

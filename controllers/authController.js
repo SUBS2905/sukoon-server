@@ -1,6 +1,5 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const {v4: uuid} = require("uuid");
 
 const signIn = async (req, res) => {
@@ -19,15 +18,8 @@ const signIn = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Generate a JWT token
-    const token = jwt.sign(
-      { email: user.email, userId: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
     // Successful authentication
-    res.status(200).json({ token, message: "Sign in successful" });
+    res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -47,11 +39,11 @@ const signUp = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     //Create verification token
-    const verificationToken = uuid();
+    const token = uuid();
 
     // Create a new user
     const newUser = new User({
-      user_token: verificationToken,
+      user_token: token,
       username,
       email,
       password: hashedPassword,
@@ -60,15 +52,8 @@ const signUp = async (req, res) => {
     // Save the new user to the database
     await newUser.save();
 
-    // Generate a JWT token
-    const token = jwt.sign(
-      { email: newUser.email, userId: newUser._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
     // Successful registration
-    res.status(201).json({ token, message: "Sign up successful" });
+    res.status(201).json(newUser);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server error" });
