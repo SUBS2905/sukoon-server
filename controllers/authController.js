@@ -1,6 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
-const {v4: uuid} = require("uuid");
+const { v4: uuid } = require("uuid");
 
 const signIn = async (req, res) => {
   try {
@@ -60,8 +60,40 @@ const signUp = async (req, res) => {
   }
 };
 
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    // Check if the user with the given token exists
+    const user = await User.findOne({ user_token: token });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Successful
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getUser = async (req, res) => {
+  try {
+    const { user_token } = req.body;
+    // console.log(user_token);
+    const user = await User.findOne({ user_token });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.status(200).json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "server error" });
+  }
+};
+
 module.exports = {
   signUp,
   signIn,
-  //   verifyLogin,
+  verifyEmail,
+  getUser,
 };
