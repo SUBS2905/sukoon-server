@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Profile = require("../models/profile");
 const bcrypt = require("bcrypt");
 const { v4: uuid } = require("uuid");
 
@@ -97,9 +98,44 @@ const getUser = async (req, res) => {
   }
 };
 
+const userProfile = async (req, res) => {
+  try {
+    const authHeader = await req.headers.authorization;
+
+    if (!authHeader) {
+      return res.status(401).json({ message: "Auth Header missing" });
+    }
+    const token = authHeader.split(" ")[1];
+    const user = await User.findOne({ user_token: token });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    } else {
+      const { fullname, phone, emergencycontact, dob, gender } = req.body;
+
+      user.profile = {
+        fullname,
+        phone,
+        emergencycontact,
+        dob,
+        gender,
+      };
+
+      await user.save();
+      res.status(200).json(user);
+    }
+
+    res.status(201).json(userProfile);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "server error" });
+  }
+};
+
 module.exports = {
   signUp,
   signIn,
   verifyEmail,
   getUser,
+  userProfile,
 };
