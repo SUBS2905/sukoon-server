@@ -80,10 +80,16 @@ const verifyEmail = async (req, res) => {
 
 const getUser = async (req, res) => {
   try {
-    const { user_token } = req.body;
+    const authHeader = await req.headers.authorization;
     // console.log(user_token);
-    const user = await User.findOne({ user_token });
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!authHeader) {
+      return res.status(401).json({ message: "Auth Header missing" });
+    }
+    const token = authHeader.split(" ")[1];
+    const user = await User.findOne({ user_token: token });
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+    }
     res.status(200).json(user);
   } catch (err) {
     console.error(err);
