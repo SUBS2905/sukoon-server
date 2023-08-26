@@ -2,6 +2,7 @@ const User = require("../models/user");
 const Profile = require("../models/profile");
 const bcrypt = require("bcrypt");
 const { v4: uuid } = require("uuid");
+const sendEmail = require("../utilities/sendEmail");
 
 const signIn = async (req, res) => {
   try {
@@ -40,11 +41,13 @@ const signUp = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     //Create verification token
-    const token = uuid();
+    const userToken = uuid();
+    const verificationToken = uuid();
 
     // Create a new user
     const newUser = new User({
-      user_token: token,
+      user_token: userToken,
+      verification_token: verificationToken,
       username,
       email,
       password: hashedPassword,
@@ -52,6 +55,17 @@ const signUp = async (req, res) => {
 
     // Save the new user to the database
     await newUser.save();
+
+    // Send Verification email
+    const verificationRoute = `${process.env.FRONTEND_URI}/verify-email?vtoken=${verificationToken}`;
+    const emailContent = `
+    <p>Click on the link below to verify your email</p>
+    <a href=${verificationRoute}>${verificationRoute}</a>
+    <br>
+    <h5>Team Sukoon</h5>
+    `;
+
+    sendEmail(email, "Sukoon: Verify your email", emailContent);
 
     // Successful registration
     res.status(201).json(newUser);
@@ -62,21 +76,19 @@ const signUp = async (req, res) => {
 };
 
 const verifyUser = async (req, res) => {
-
   try {
-    const { user_token } = req.body;
-    const user = await User.findOne({ user_token });
+    const { verification_token } = req.body;
+    const user = await User.findOne({ verification_token });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     } else {
-      if(!user.verified){
+      if (!user.verified) {
         user.verified = true;
         await user.save();
       }
       res.status(200).json(user);
     }
-
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }

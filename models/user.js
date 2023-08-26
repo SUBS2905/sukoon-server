@@ -21,11 +21,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    verified:{
-      type: Boolean,
-      default: false
+    verification_token: {
+      type: String,
+      required: true,
     },
-    profile: profileSchema
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+    profile: profileSchema,
   },
   { timestamps: true }
 );
