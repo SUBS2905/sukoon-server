@@ -61,19 +61,22 @@ const signUp = async (req, res) => {
   }
 };
 
-const verifyEmail = async (req, res) => {
-  try {
-    const { token } = req.body;
+const verifyUser = async (req, res) => {
 
-    // Check if the user with the given token exists
-    const user = await User.findOne({ user_token: token });
+  try {
+    const { user_token } = req.body;
+    const user = await User.findOne({ user_token });
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    } else {
+      if(!user.verified){
+        user.verified = true;
+        await user.save();
+      }
+      res.status(200).json(user);
     }
 
-    // Successful
-
-    res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -135,7 +138,7 @@ const userProfile = async (req, res) => {
 module.exports = {
   signUp,
   signIn,
-  verifyEmail,
+  verifyUser,
   getUser,
   userProfile,
 };
