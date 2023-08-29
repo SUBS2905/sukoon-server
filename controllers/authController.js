@@ -126,10 +126,11 @@ const userProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     } else {
-      const { fullname, phone, emergencycontact, dob, gender } = req.body;
+      const { firstname, lastname, phone, emergencycontact, dob, gender } = req.body;
 
       user.profile = {
-        fullname,
+        firstname,
+        lastname,
         phone,
         emergencycontact,
         dob,
