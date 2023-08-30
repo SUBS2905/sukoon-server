@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const app = express();
 
 const userRouter = require("./routes/authRoutes");
+const testRouter = require("./routes/testRoutes")
 
 const cookieParser = require("cookie-parser");
 
@@ -37,6 +38,7 @@ app.use(
 );
 
 app.use("/user", userRouter);
+app.use("/test", testRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "sukoon web service" });
