@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const profileSchema = require("./profile");
+const testSchema = require("./test");
 
 const userSchema = new mongoose.Schema(
   {
@@ -30,6 +31,7 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     profile: profileSchema,
+    selfAssessmentTests: [testSchema],
   },
   { timestamps: true }
 );
