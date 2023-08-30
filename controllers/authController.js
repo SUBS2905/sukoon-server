@@ -1,5 +1,4 @@
 const User = require("../models/user");
-const Profile = require("../models/profile");
 const bcrypt = require("bcrypt");
 const { v4: uuid } = require("uuid");
 const sendEmail = require("../utilities/sendEmail");
@@ -140,8 +139,6 @@ const userProfile = async (req, res) => {
       await user.save();
       res.status(200).json(user);
     }
-
-    res.status(201).json(userProfile);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "server error" });
