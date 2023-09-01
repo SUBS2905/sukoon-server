@@ -74,25 +74,6 @@ const signUp = async (req, res) => {
   }
 };
 
-const verifyUser = async (req, res) => {
-  try {
-    const { verification_token } = req.body;
-    const user = await User.findOne({ verification_token });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    } else {
-      if (!user.verified) {
-        user.verified = true;
-        await user.save();
-      }
-      res.status(200).json(user);
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
 const getUser = async (req, res) => {
   try {
     const authHeader = await req.headers.authorization;
@@ -125,7 +106,8 @@ const userProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     } else {
-      const { firstname, lastname, phone, emergencycontact, dob, gender } = req.body;
+      const { firstname, lastname, phone, emergencycontact, dob, gender } =
+        req.body;
 
       user.profile = {
         firstname,
@@ -145,10 +127,87 @@ const userProfile = async (req, res) => {
   }
 };
 
+const verifyUser = async (req, res) => {
+  try {
+    const { verification_token } = req.body;
+    const user = await User.findOne({ verification_token });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    } else {
+      if (!user.verified) {
+        user.verified = true;
+        await user.save();
+      }
+      res.status(200).json(user);
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: true, message: "User not found" });
+    }
+    const resetToken = uuid();
+    user.reset_token = resetToken;
+    user.reset_token_expiry = Date.now() + 3600000; //1 hour
+
+    await user.save();
+
+    const resetLink = `${process.env.FRONTEND_URI}/reset-password?resetToken=${resetToken}`;
+
+    const emailContent = `
+    <p>Click on the link below to reset your password</p>
+    <a href=${resetLink}>${resetLink}</a>
+    <br>
+    <h5>Team Sukoon</h5>
+    `;
+
+    sendEmail(email, "Sukoon: Reset your password", emailContent);
+    res.status(200).json({ success: true, message: "Email sent successfully" });
+  } catch {
+    res.status(500).json({ success: false, message: "server error" });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { resetToken, newPassword } = req.body;
+    const user = await User.findOne({
+      reset_token: resetToken,
+      reset_token_expiry: { $gte: Date.now() },
+    });
+
+    if (!user) {
+      res
+        .status(401)
+        .json({ success: false, message: "Invalid or expired token" });
+    }
+    user.password = bcrypt.hashSync(newPassword, 12);
+    user.reset_token = null;
+    user.reset_token_expiry = null;
+
+    await user.save();
+
+    res
+      .status(200)
+      .json({ success: true, message: "Password reset successful" });
+  } catch {
+    res.status(500).json({ message: "server error" });
+  }
+};
+
 module.exports = {
   signUp,
   signIn,
-  verifyUser,
   getUser,
   userProfile,
+  verifyUser,
+  forgotPassword,
+  resetPassword,
 };
