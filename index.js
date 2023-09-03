@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 const app = express();
 
 const userRouter = require("./routes/authRoutes");
-const testRouter = require("./routes/testRoutes")
+const testRouter = require("./routes/testRoutes");
 
 const cookieParser = require("cookie-parser");
 
@@ -15,7 +15,7 @@ const bodyParser = require("body-parser");
 dotenv.config();
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/sukoon")
+  .connect(process.env.MONGO_URI)
   .then(() => {})
   .catch((err) => {
     console.log(err);
