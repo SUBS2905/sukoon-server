@@ -28,7 +28,7 @@ const signIn = async (req, res) => {
 
 const signUp = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, isProfessional } = req.body;
 
     // Check if the email is already registered
     const existingUser = await User.findOne({ email });
@@ -50,6 +50,7 @@ const signUp = async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      isProfessional,
     });
 
     // Save the new user to the database

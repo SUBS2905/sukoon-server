@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const profileSchema = require("./profile");
 const testSchema = require("./test");
+const professionalSchema = require("./professional");
 
 const userSchema = new mongoose.Schema(
   {
@@ -36,8 +37,19 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    profile: profileSchema,
-    selfAssessmentTests: [testSchema],
+    isProfessional: {
+      type: Boolean,
+      default: false,
+    },
+    professional: {
+      type: professionalSchema,
+    },
+    profile: {
+      type: profileSchema,
+    },
+    selfAssessmentTests: {
+      type: [testSchema],
+    },
   },
   { timestamps: true }
 );
