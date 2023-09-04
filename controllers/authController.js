@@ -128,6 +128,43 @@ const userProfile = async (req, res) => {
   }
 };
 
+const professionalProfile = async (req, res) => {
+  try {
+    const authHeader = await req.headers.authorization;
+
+    if (!authHeader) {
+      return res.status(401).json({ message: "Auth Header missing" });
+    }
+    const token = authHeader.split(" ")[1];
+    const user = await User.findOne({ user_token: token });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    } else {
+      const { firstname, lastname, gender, dob, contact, license_number, licensing_authority, experience, speciality} =
+        req.body;
+
+      user.professional = {
+        firstname,
+        lastname,
+        gender,
+        contact,
+        dob,
+        license_number,
+        licensing_authority,
+        experience,
+        speciality
+      };
+
+      await user.save();
+      res.status(200).json(user);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "server error" });
+  }
+};
+
 const verifyUser = async (req, res) => {
   try {
     const { verification_token } = req.body;
@@ -208,6 +245,7 @@ module.exports = {
   signIn,
   getUser,
   userProfile,
+  professionalProfile,
   verifyUser,
   forgotPassword,
   resetPassword,
