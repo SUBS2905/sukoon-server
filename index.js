@@ -7,7 +7,7 @@ const app = express();
 
 const userRouter = require("./routes/authRoutes");
 const testRouter = require("./routes/testRoutes");
-
+const professionalRouter = require("./routes/professionalRoutes");
 const cookieParser = require("cookie-parser");
 
 const bodyParser = require("body-parser");
@@ -39,6 +39,7 @@ app.use(
 
 app.use("/user", userRouter);
 app.use("/test", testRouter);
+app.use("/professional", professionalRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "sukoon web service" });
