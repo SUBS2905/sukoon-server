@@ -24,7 +24,7 @@ const professionalSchema = new mongoose.Schema({
   license_number: {
     type: String,
     required: true,
-    unique: true,
+    default: null
   },
   licensing_authority: {
     type: String,

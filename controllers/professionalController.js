@@ -11,11 +11,11 @@ const getAllProfessionals = async (req, res) => {
 };
 
 const getDetails = async (req, res) => {
+  const professionalId = req.params.id;
   try {
-    const { license_number } = req.body;
-    const professional = await User.find({"professional.license_number" : license_number}).select("professional");
+    const professional = await User.findOne({"professional._id": professionalId}).select("professional");
 
-    if(professional.length === 0){
+    if(!professional){
       res.status(404).json({message: "Professional not found"});
     }
     res.status(200).json(professional);
