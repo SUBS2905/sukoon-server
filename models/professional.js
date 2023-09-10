@@ -13,7 +13,7 @@ const professionalSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  dob:{
+  dob: {
     type: Date,
     required: true,
   },
@@ -24,7 +24,7 @@ const professionalSchema = new mongoose.Schema({
   license_number: {
     type: String,
     required: true,
-    default: null
+    default: null,
   },
   licensing_authority: {
     type: String,
@@ -35,6 +35,12 @@ const professionalSchema = new mongoose.Schema({
     required: true,
   },
   speciality: [String],
+  associated_clients: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
 module.exports = professionalSchema;

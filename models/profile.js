@@ -24,6 +24,12 @@ const profileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  associated_professionals: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
 module.exports = profileSchema;

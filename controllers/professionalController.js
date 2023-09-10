@@ -50,6 +50,12 @@ const notify = async (req, res) => {
       return res.status(404).json({ message: "Professional not found" });
     }
 
+    clientInfo.profile.associated_professionals.push(professionalInfo._id);
+    professionalInfo.professional.associated_clients.push(clientInfo._id);
+
+    await clientInfo.save();
+    await professionalInfo.save();
+
     const email = professionalInfo.email;
     const subject = `New Client Request: ${clientInfo.profile.firstname}`;
     const content = `
