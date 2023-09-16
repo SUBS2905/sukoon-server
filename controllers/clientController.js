@@ -23,9 +23,9 @@ const getAssociatedClients = async (req, res) => {
 };
 
 const getClientDetails = async (req, res) => {
+  const clientId = req.params.id;
+  
   try {
-    const clientId = req.params.id;
-
     const clientInfo = await User.findOne({ _id: clientId }).select("profile");
 
     if (!clientInfo) {
@@ -39,4 +39,30 @@ const getClientDetails = async (req, res) => {
   }
 };
 
-module.exports = { getAssociatedClients, getClientDetails };
+const getClientAssessmentResults = async(req, res)=>{
+  const clientId = req.params.id;
+  const authHeader = await req.headers.authorization;
+
+  try{
+    if (!authHeader) {
+      return res.status(401).json({ message: "Auth Header missing" });
+    }
+    const token = authHeader.split(" ")[1];
+    const professionalInfo = await User.findOne({ user_token: token });
+
+    if (!professionalInfo || !professionalInfo.isProfessional) {
+      return res.status(404).json({ message: "Unauthorized" });
+    }
+
+    const clientAssessmentInfo = await User.findOne({_id: clientId}).select("selfAssessmentTests")
+    if(clientAssessmentInfo.length === 0){
+      res.status(404).json({message: "No assessments taken yet"});
+    }
+    return res.status(200).json(clientAssessmentInfo)
+  }catch(err){
+    console.log(err);
+    res.status(500).json({message: "Server error"});
+  }
+}
+
+module.exports = { getAssociatedClients, getClientDetails, getClientAssessmentResults };
