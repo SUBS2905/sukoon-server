@@ -13,12 +13,12 @@ const addTest = async (req, res) => {
     if (!user) {
       res.status(404).json({ success: false, message: "User not found" });
     } else {
-      const { testName, testScore, testResult, requireFurtherEvaluation } =
-        req.body;
+      const { testName, testScore, maxScore, testResult, requireFurtherEvaluation } = req.body;
 
       const newTest = {
         testName,
         testScore,
+        maxScore,
         testResult,
         requireFurtherEvaluation,
       };

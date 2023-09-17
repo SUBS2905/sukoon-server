@@ -10,6 +10,10 @@ const testSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    maxScore: {
+      type: Number,
+      required: true,
+    },
     testResult: {
       type: String,
       required: true,
