@@ -15,12 +15,15 @@ const bodyParser = require("body-parser");
 
 dotenv.config();
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {})
-  .catch((err) => {
-    console.log(err);
-  });
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
+};
 
 require("./models/user");
 
@@ -47,6 +50,8 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "sukoon web service" });
 });
 
-app.listen(process.env.PORT || 5000, () => {
-  console.log("Server Running🚀: http://localhost:5000/");
+connectDB().then(() => {
+  app.listen(process.env.PORT || 5000, () => {
+    console.log("Server Running🚀");
+  });
 });
