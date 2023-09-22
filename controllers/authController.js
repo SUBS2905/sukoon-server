@@ -94,7 +94,7 @@ const getUser = async (req, res) => {
   }
 };
 
-const userProfile = async (req, res) => {
+const updateUserProfile = async (req, res) => {
   try {
     const authHeader = await req.headers.authorization;
 
@@ -107,17 +107,14 @@ const userProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     } else {
-      const { firstname, lastname, phone, emergencycontact, dob, gender } =
-        req.body;
+      const { firstname, lastname, phone, emergencycontact, dob, gender } = req.body;
 
-      user.profile = {
-        firstname,
-        lastname,
-        phone,
-        emergencycontact,
-        dob,
-        gender,
-      };
+      if (firstname) user.profile.firstname = firstname;
+      if (lastname) user.profile.lastname = lastname;
+      if (phone) user.profile.phone = phone;
+      if (emergencycontact) user.profile.emergencycontact = emergencycontact;
+      if (dob) user.profile.dob = dob;
+      if (gender) user.profile.gender = gender;
 
       await user.save();
       res.status(200).json(user);
@@ -128,7 +125,7 @@ const userProfile = async (req, res) => {
   }
 };
 
-const professionalProfile = async (req, res) => {
+const updateProfessionalProfile = async (req, res) => {
   try {
     const authHeader = await req.headers.authorization;
 
@@ -141,20 +138,27 @@ const professionalProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     } else {
-      const { firstname, lastname, gender, dob, contact, license_number, licensing_authority, experience, speciality} =
-        req.body;
-
-      user.professional = {
+      const {
         firstname,
         lastname,
         gender,
-        contact,
         dob,
+        contact,
         license_number,
         licensing_authority,
         experience,
-        speciality
-      };
+        speciality,
+      } = req.body;
+
+      if (firstname) user.professional.firstname = firstname;
+      if (lastname) user.professional.lastname = lastname;
+      if (gender) user.professional.gender = gender;
+      if (dob) user.professional.dob = dob;
+      if (contact) user.professional.contact = contact;
+      if (license_number) user.professional.license_number = license_number;
+      if (licensing_authority) user.professional.licensing_authority = licensing_authority;
+      if (experience) user.professional.experience = experience;
+      if (speciality) user.professional.speciality = speciality;
 
       await user.save();
       res.status(200).json(user);
@@ -244,8 +248,8 @@ module.exports = {
   signUp,
   signIn,
   getUser,
-  userProfile,
-  professionalProfile,
+  updateUserProfile,
+  updateProfessionalProfile,
   verifyUser,
   forgotPassword,
   resetPassword,
