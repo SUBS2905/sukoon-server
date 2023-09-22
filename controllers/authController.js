@@ -107,7 +107,11 @@ const updateUserProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     } else {
-      const { firstname, lastname, phone, emergencycontact, dob, gender } = req.body;
+      if (!user.profile) {
+        user.profile = {};
+      }
+      const { firstname, lastname, phone, emergencycontact, dob, gender } =
+        req.body;
 
       if (firstname) user.profile.firstname = firstname;
       if (lastname) user.profile.lastname = lastname;
@@ -138,17 +142,10 @@ const updateProfessionalProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     } else {
-      const {
-        firstname,
-        lastname,
-        gender,
-        dob,
-        contact,
-        license_number,
-        licensing_authority,
-        experience,
-        speciality,
-      } = req.body;
+      if (!user.professional) {
+        user.professional = {};
+      }
+      const { firstname, lastname, gender, dob, contact, license_number, licensing_authority, experience, speciality } = req.body;
 
       if (firstname) user.professional.firstname = firstname;
       if (lastname) user.professional.lastname = lastname;
@@ -156,7 +153,8 @@ const updateProfessionalProfile = async (req, res) => {
       if (dob) user.professional.dob = dob;
       if (contact) user.professional.contact = contact;
       if (license_number) user.professional.license_number = license_number;
-      if (licensing_authority) user.professional.licensing_authority = licensing_authority;
+      if (licensing_authority)
+        user.professional.licensing_authority = licensing_authority;
       if (experience) user.professional.experience = experience;
       if (speciality) user.professional.speciality = speciality;
 
