@@ -45,9 +45,13 @@ const notify = async (req, res) => {
     }
 
     const professionalInfo = await User.findOne({"professional._id": professionalId});
-
+    
     if (!professionalInfo) {
       return res.status(404).json({ message: "Professional not found" });
+    }
+
+    if(clientInfo.profile.associated_professionals.length >= 1){
+      return res.status(409).json({message: "Already consulting a professional"});
     }
 
     clientInfo.profile.associated_professionals.push(professionalInfo._id);
